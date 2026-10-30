@@ -2,7 +2,7 @@
 
 **An interactive 3D journey through the Roman temples of Baalbek (ancient Heliopolis), from their construction to the ruins of today.**
 
-**Live demo:** _add your Firebase URL here after deploying_
+**Live demo:** https://baalbek-3d.web.app
 
 ![The temple complex around 150 AD](docs/roman.jpg)
 
