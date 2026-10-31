@@ -37,6 +37,13 @@ test('site page: hero, timeline, gallery and lightbox', async ({ page }, info) =
 
   await page.locator('.gallery__item').first().click()
   await expect(page.getByRole('dialog')).toBeVisible()
+  const first = await page.locator('.lightbox img').getAttribute('src')
+  await page.locator('.lightbox__next').click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  expect(await page.locator('.lightbox img').getAttribute('src')).not.toBe(first)
+  await page.locator('.lightbox__prev').click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  expect(await page.locator('.lightbox img').getAttribute('src')).toBe(first)
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
 
@@ -72,6 +79,22 @@ test('arabic layout is right-to-left and remembered', async ({ page }, info) => 
   await shot(page, 'map-ar', info.project.name)
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+})
+
+test('narrated map tour flies to each place as its story begins', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.pin').first()).toBeVisible({ timeout: 20_000 })
+  const narration = page.getByRole('button', { name: 'Narration' })
+  await narration.click()
+  await expect(narration).toHaveAttribute('aria-pressed', 'true')
+  await page.locator('.scrubber .btn--round').first().click()
+  await expect(page.locator('.focus-card h2')).not.toBeEmpty({ timeout: 10_000 })
+  const skip = page.getByRole('button', { name: 'Skip' })
+  await expect(skip).toBeVisible()
+  await skip.click()
+  await expect(page.locator('.focus-card')).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Narration' })).toHaveAttribute('aria-pressed', 'true')
 })
 
 for (const id of ['baalbek', 'anjar', 'tyre', 'cedars-of-god']) {

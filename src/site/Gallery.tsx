@@ -52,14 +52,26 @@ function Lightbox({ photos, index, onClose, onMove }: { photos: Photo[]; index: 
       <button type="button" className="info__close lightbox__close" onClick={onClose} aria-label={tr(UI.close)}>
         ×
       </button>
-      <button type="button" className="btn btn--round lightbox__prev" disabled={index === 0} onClick={() => onMove(index - 1)} aria-label={tr(UI.previous)}>
+      <button
+        type="button"
+        className="btn btn--round lightbox__prev"
+        disabled={index === 0}
+        onClick={(e) => {
+          e.stopPropagation()
+          onMove(index - 1)
+        }}
+        aria-label={tr(UI.previous)}
+      >
         {rtl ? '›' : '‹'}
       </button>
       <button
         type="button"
         className="btn btn--round lightbox__next"
         disabled={index === photos.length - 1}
-        onClick={() => onMove(index + 1)}
+        onClick={(e) => {
+          e.stopPropagation()
+          onMove(index + 1)
+        }}
         aria-label={tr(UI.next)}
       >
         {rtl ? '‹' : '›'}

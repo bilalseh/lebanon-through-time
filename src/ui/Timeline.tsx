@@ -1,6 +1,7 @@
 import { UI } from '../data/ui'
 import { nearestEra } from '../experiences/eras'
 import type { Experience } from '../experiences/types'
+import { cancel, narrationSupported } from '../lib/narration'
 import { actions, useStore } from '../state/store'
 import { useT } from '../lib/useLang'
 
@@ -9,6 +10,7 @@ export function Timeline({ experience }: { experience: Experience }) {
   const { eras, timelineMax } = experience
   const t = useStore((s) => s.t)
   const playing = useStore((s) => s.playing)
+  const narrate = useStore((s) => s.narrate) && narrationSupported
   const tr = useT()
   const era = nearestEra(eras, t)
 
@@ -28,6 +30,11 @@ export function Timeline({ experience }: { experience: Experience }) {
         >
           {playing ? '❚❚' : '▶'}
         </button>
+        {playing && narrate && (
+          <button type="button" className="btn btn--round" onClick={() => cancel()} aria-label={tr(UI.skip)} title={tr(UI.skip)}>
+            ⏭
+          </button>
+        )}
         <div className="timeline__track">
           <input
             type="range"

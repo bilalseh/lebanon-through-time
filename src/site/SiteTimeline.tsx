@@ -2,10 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import type { Site } from '../data/types'
 import { UI } from '../data/ui'
 import { formatYear, periodAt } from '../data/years'
+import { cancel, narrationSupported, speak } from '../lib/narration'
 import { useT } from '../lib/useLang'
 import { useStore } from '../state/store'
+import { NarrationToggle } from '../ui/NarrationToggle'
 
 const STEP_MS = 4500
+const AFTER_SPEECH_MS = 700
 
 /** A site's history as a scrubbable row of dated stops with a card for the active one. */
 export function SiteTimeline({ site }: { site: Site }) {
@@ -13,6 +16,7 @@ export function SiteTimeline({ site }: { site: Site }) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const lang = useStore((s) => s.lang)
+  const narrate = useStore((s) => s.narrate) && narrationSupported
   const rtl = lang === 'ar'
   const tr = useT()
   const event = events[index]
@@ -33,24 +37,32 @@ export function SiteTimeline({ site }: { site: Site }) {
     el.scrollTo({ left: tick.offsetLeft - el.clientWidth / 2 + tick.clientWidth / 2, behavior: 'smooth' })
   }, [index])
 
+  // While playing, each stop is read aloud (or simply shown for a few seconds) before the next one.
   useEffect(() => {
     if (!playing) return
-    const timer = window.setInterval(() => {
-      setIndex((i) => {
-        if (i + 1 >= events.length) {
-          setPlaying(false)
-          return i
-        }
-        return i + 1
+    let alive = true
+    let timer = 0
+    const advance = () => {
+      if (!alive) return
+      if (index + 1 >= events.length) setPlaying(false)
+      else setIndex(index + 1)
+    }
+    if (narrate) {
+      const current = events[index]
+      speak(`${formatYear(current.year, lang, current.approx)}. ${current.title[lang]}. ${current.text[lang]}`, lang).then(() => {
+        if (alive) timer = window.setTimeout(advance, AFTER_SPEECH_MS)
       })
-    }, STEP_MS)
-    return () => window.clearInterval(timer)
-  }, [playing, events.length])
+    } else {
+      timer = window.setTimeout(advance, STEP_MS)
+    }
+    return () => {
+      alive = false
+      window.clearTimeout(timer)
+      cancel()
+    }
+  }, [playing, index, narrate, lang, events])
 
-  const go = (i: number) => {
-    setPlaying(false)
-    setIndex(Math.min(events.length - 1, Math.max(0, i)))
-  }
+  const go = (i: number) => setIndex(Math.min(events.length - 1, Math.max(0, i)))
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     const forward = rtl ? 'ArrowLeft' : 'ArrowRight'
@@ -101,6 +113,7 @@ export function SiteTimeline({ site }: { site: Site }) {
           <button type="button" className="btn btn--round" onClick={() => setPlaying((p) => !p)} aria-label={playing ? tr(UI.pause) : tr(UI.play)}>
             {playing ? '❚❚' : '▶'}
           </button>
+          <NarrationToggle compact />
           <span className="stl__counter" dir="ltr">
             {index + 1} / {events.length}
           </span>

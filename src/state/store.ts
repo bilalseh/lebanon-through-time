@@ -5,6 +5,8 @@ import { parsePath, type View } from '../lib/router'
 
 export interface AppState {
   lang: Lang
+  /** Read texts aloud while playing a timeline. */
+  narrate: boolean
   view: View
   /* Map */
   /** Site highlighted on the map (its card is shown and the camera flies to it). */
@@ -59,10 +61,19 @@ const savedLang = (() => {
   }
 })()
 
+const savedNarrate = (() => {
+  try {
+    return localStorage.getItem('ltt-narrate') === '1'
+  } catch {
+    return false
+  }
+})()
+
 const initialView = typeof location === 'undefined' ? { kind: 'map' as const } : parsePath(location.pathname)
 
 export const store = createStore({
   lang: savedLang ?? (navigator.language?.startsWith('ar') ? 'ar' : 'en'),
+  narrate: savedNarrate,
   view: initialView,
   focused: initialView.kind === 'map' ? null : initialView.id,
   hovered: null,
@@ -90,6 +101,14 @@ export const actions = {
       /* storage unavailable: language just won't be remembered */
     }
     store.set({ lang })
+  },
+  setNarrate(narrate: boolean) {
+    try {
+      localStorage.setItem('ltt-narrate', narrate ? '1' : '0')
+    } catch {
+      /* storage unavailable: the choice just won't be remembered */
+    }
+    store.set({ narrate })
   },
   /** Navigation goes through here so the URL and the view never drift apart. */
   navigate(view: View) {

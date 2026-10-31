@@ -186,10 +186,13 @@
 }
 
 /* Pins on the relief */
+/* The button is centred on the anchor point and the label hangs off its side, so the dot never drifts off the place. */
 .pin {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 0;
   background: none;
@@ -198,7 +201,7 @@
   font-weight: 600;
   white-space: nowrap;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-  transition: opacity 0.3s, transform 0.2s;
+  transition: opacity 0.3s;
 }
 .pin__dot {
   width: 14px;
@@ -211,8 +214,24 @@
   flex: none;
 }
 .pin__label {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 100%;
+  transform: translateY(-50%);
+  margin-inline-start: 2px;
   opacity: 0;
   transition: opacity 0.2s;
+  pointer-events: none;
+}
+.btn.is-on {
+  background: rgba(232, 201, 138, 0.3);
+  border-color: rgba(232, 201, 138, 0.6);
+  color: var(--gold-strong);
+}
+.btn--narration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 .pin--labelled .pin__label {
   opacity: 1;

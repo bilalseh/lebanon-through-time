@@ -7,7 +7,7 @@ import { OverlayHtml, type OverlayRef } from '../experiences/shared/OverlayHtml'
 import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { filterSites } from './filter'
-import { sitePosition } from './positions'
+import { pinPosition } from './positions'
 
 /** Camera distance below which every marker shows its name. */
 const LABEL_DISTANCE = 210
@@ -40,7 +40,7 @@ export function MapMarkers({ portal }: { portal: OverlayRef }) {
         const dim = firstYear(site) > year
         const showLabel = zoomed || active || hovered === site.id
         return (
-          <OverlayHtml key={site.id} portal={portal} position={sitePosition(site)} center zIndexRange={[12, 0]}>
+          <OverlayHtml key={site.id} portal={portal} position={pinPosition(site)} center zIndexRange={[12, 0]}>
             <button
               type="button"
               className={`pin${active ? ' pin--active' : ''}${dim ? ' pin--dim' : ''}${showLabel ? ' pin--labelled' : ''}`}

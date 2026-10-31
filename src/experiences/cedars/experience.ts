@@ -9,7 +9,7 @@ export const experience: Experience = {
   eras: ERAS,
   hotspots: HOTSPOTS,
   overview: { position: [-470, 260, 440], target: [0, 10, 0] },
-  controls: { minDistance: 25, maxDistance: 1900, maxPolarAngle: Math.PI / 2.15 },
+  controls: { minDistance: 25, maxDistance: 1900, maxPolarAngle: Math.PI / 2.4 },
   camera: { fov: 45, near: 1, far: 9000 },
   playSeconds: 18,
   Scene,

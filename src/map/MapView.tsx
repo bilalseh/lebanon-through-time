@@ -4,6 +4,7 @@ import { AdaptiveDpr } from '@react-three/drei'
 import { MAP_OVERVIEW, MapCamera } from './MapCamera'
 import { MapMarkers } from './MapMarkers'
 import { MapOverlay } from './MapOverlay'
+import { SiteGlyphs } from './SiteGlyphs'
 import { Terrain } from './Terrain'
 
 const SUN: [number, number, number] = [-220, 260, 140]
@@ -39,6 +40,7 @@ export function MapView() {
             shadow-bias={-0.0006}
           />
           <Terrain portal={overlay} />
+          <SiteGlyphs />
           <MapMarkers portal={overlay} />
           <MapCamera />
         </Canvas>

@@ -43,6 +43,8 @@ export const UI = {
   photoSource: { en: 'Source', ar: 'المصدر' },
   historicPhoto: { en: 'Historical photograph', ar: 'صورة تاريخية' },
   play: { en: 'Play history', ar: 'تشغيل التاريخ' },
+  narration: { en: 'Narration', ar: 'سرد صوتي' },
+  skip: { en: 'Skip', ar: 'تخطّي' },
   pause: { en: 'Pause', ar: 'إيقاف مؤقت' },
   close: { en: 'Close', ar: 'إغلاق' },
   previous: { en: 'Previous', ar: 'السابق' },

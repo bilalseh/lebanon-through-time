@@ -7,6 +7,8 @@ export interface AtmosphereProps {
   fog?: [string, number, number]
   ground?: string
   groundSize?: number
+  /** Height of the ground plane; lower it when the scene's own terrain dips below zero. */
+  groundY?: number
   /** Half-size of the area that receives shadows; keep it tight for crisp shadows. */
   shadowExtent?: number
   children?: ReactNode
@@ -18,6 +20,7 @@ export function Atmosphere({
   fog = ['#d8d2c4', 320, 1300],
   ground = '#b6a079',
   groundSize = 4000,
+  groundY = 0,
   shadowExtent = 190,
   children,
 }: AtmosphereProps) {
@@ -40,7 +43,7 @@ export function Atmosphere({
         shadow-camera-far={600}
         shadow-bias={-0.0004}
       />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, groundY, 0]} receiveShadow>
         <planeGeometry args={[groundSize, groundSize]} />
         <meshStandardMaterial color={ground} roughness={1} />
       </mesh>

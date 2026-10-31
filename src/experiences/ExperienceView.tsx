@@ -8,6 +8,7 @@ import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { InfoPanel } from '../ui/InfoPanel'
 import { LangToggle } from '../ui/LangToggle'
+import { NarrationToggle } from '../ui/NarrationToggle'
 import { PlacesList } from '../ui/PlacesList'
 import { Timeline } from '../ui/Timeline'
 import { TopBar } from '../ui/TopBar'
@@ -66,6 +67,7 @@ export function ExperienceView({ site }: { site: Site }) {
         <button type="button" className="btn" onClick={() => actions.setTouring(!touring)}>
           {touring ? tr(UI.stopTour) : tr(UI.tour)}
         </button>
+        <NarrationToggle compact />
         <LangToggle />
       </TopBar>
       <PlacesList hotspots={experience.hotspots} />

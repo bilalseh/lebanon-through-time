@@ -2,37 +2,77 @@ import { useEffect } from 'react'
 import { SITES, firstYear } from '../data/sites'
 import { UI } from '../data/ui'
 import { MAP_YEAR_MAX, MAP_YEAR_MIN, PERIODS, formatYear, periodAt, progressFromYear, yearFromProgress } from '../data/years'
+import { cancel, narrationSupported, speak } from '../lib/narration'
 import { useT } from '../lib/useLang'
 import { actions, store, useStore } from '../state/store'
 
 const STEPS = 1000
 const PLAY_SECONDS = 24
 
-/** Sweeps the map's year from the beginning to today. */
+/**
+ * Sweeps the map's year from the beginning to today. With narration on it
+ * becomes a guided tour: the sweep pauses at each place as its story begins,
+ * flies there and reads its first chapter before moving on.
+ */
 function useYearPlayback() {
   const playing = useStore((s) => s.yearPlaying)
+  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const lang = useStore((s) => s.lang)
   useEffect(() => {
     if (!playing) return
     if (store.get().year >= MAP_YEAR_MAX) actions.setYear(MAP_YEAR_MIN)
+    const lit = new Set(SITES.filter((s) => firstYear(s) <= store.get().year).map((s) => s.id))
     let frame = 0
+    let alive = true
+    let speaking = false
     let last = performance.now()
+
     const tick = (now: number) => {
+      if (!alive) return
       const dt = (now - last) / 1000
       last = now
-      const p = Math.min(1, progressFromYear(store.get().year) + dt / PLAY_SECONDS)
-      actions.setYear(yearFromProgress(p))
-      if (p >= 1) actions.setYearPlaying(false)
-      else frame = requestAnimationFrame(tick)
+      if (!speaking) {
+        const year = store.get().year
+        const newcomer = narrate ? SITES.find((s) => !lit.has(s.id) && firstYear(s) <= year) : undefined
+        if (newcomer) {
+          lit.add(newcomer.id)
+          const first = newcomer.events[0]
+          actions.setYear(first.year)
+          actions.focus(newcomer.id)
+          speaking = true
+          const text = `${newcomer.name[lang]}. ${formatYear(first.year, lang, first.approx)}. ${first.title[lang]}. ${first.text[lang]}`
+          speak(text, lang).then(() => {
+            speaking = false
+            last = performance.now()
+          })
+        } else {
+          const p = Math.min(1, progressFromYear(year) + dt / PLAY_SECONDS)
+          const next = yearFromProgress(p)
+          actions.setYear(next)
+          // Without narration nobody is announced, so just keep the set current.
+          if (!narrate) for (const s of SITES) if (firstYear(s) <= next) lit.add(s.id)
+          if (p >= 1) {
+            actions.setYearPlaying(false)
+            return
+          }
+        }
+      }
+      frame = requestAnimationFrame(tick)
     }
     frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [playing])
+    return () => {
+      alive = false
+      cancelAnimationFrame(frame)
+      cancel()
+    }
+  }, [playing, narrate, lang])
 }
 
 /** The map's time slider: 11,000 years of Lebanese history, coloured by period. */
 export function TimeScrubber() {
   const year = useStore((s) => s.year)
   const playing = useStore((s) => s.yearPlaying)
+  const narrate = useStore((s) => s.narrate) && narrationSupported
   const lang = useStore((s) => s.lang)
   const tr = useT()
   useYearPlayback()
@@ -62,6 +102,11 @@ export function TimeScrubber() {
         >
           {playing ? '❚❚' : '▶'}
         </button>
+        {playing && narrate && (
+          <button type="button" className="btn btn--round" onClick={() => cancel()} aria-label={tr(UI.skip)} title={tr(UI.skip)}>
+            ⏭
+          </button>
+        )}
         <div className="scrubber__track">
           <div className="scrubber__periods" aria-hidden="true">
             {PERIODS.map((p) => {

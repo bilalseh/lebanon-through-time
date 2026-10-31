@@ -7,6 +7,7 @@ import { hasExperience } from '../experiences/types'
 import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { LangToggle } from '../ui/LangToggle'
+import { NarrationToggle } from '../ui/NarrationToggle'
 import { TopBar } from '../ui/TopBar'
 import { TimeScrubber } from './TimeScrubber'
 import { filterSites } from './filter'
@@ -133,6 +134,7 @@ export function MapOverlay() {
         <button type="button" className="btn sidebar-toggle" onClick={() => setDrawer((d) => !d)} aria-expanded={drawer}>
           {tr(UI.sites)}
         </button>
+        <NarrationToggle compact />
         <LangToggle />
       </TopBar>
       <div className={`sidebar-wrap${drawer ? ' is-open' : ''}`}>

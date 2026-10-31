@@ -126,7 +126,7 @@ export function Scene() {
   const chapelY = groundHeight(cx, cz)
 
   return (
-    <Atmosphere sun={[-400, 500, 300]} fog={['#dfe6ea', 700, 2600]} ground="#8f8676" groundSize={9000} shadowExtent={420}>
+    <Atmosphere sun={[-400, 500, 300]} fog={['#dfe6ea', 700, 2600]} ground="#8f8676" groundSize={9000} groundY={-260} shadowExtent={420}>
       <mesh geometry={terrain} receiveShadow castShadow>
         <meshStandardMaterial vertexColors flatShading roughness={1} />
       </mesh>
@@ -140,7 +140,7 @@ export function Scene() {
       ))}
       {/* Hadrian's boundary inscriptions */}
       {HADRIAN_MARKERS.map(([x, z], i) => (
-        <Block key={i} size={[1.6, 2, 0.8]} position={[x, groundHeight(x, z), z]} scaleY={s.markers} color="#d8d2c4" rotation={[0, (i / 8) * Math.PI * 2, 0]} />
+        <Block key={i} size={[2.8, 3.4, 1.2]} position={[x, groundHeight(x, z), z]} scaleY={s.markers} color="#e3ddd0" rotation={[0, (i / 8) * Math.PI * 2, 0]} />
       ))}
       {/* The 1876 wall */}
       {s.wall > 0.01 && (
