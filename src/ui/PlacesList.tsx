@@ -1,9 +1,10 @@
-import { HOTSPOTS, UI } from '../data/content'
+import type { Hotspot } from '../data/types'
+import { UI } from '../data/ui'
 import { actions, useStore } from '../state/store'
 import { useT } from '../lib/useLang'
 
 /** Keyboard- and screen-reader-friendly alternative to the 3D markers. */
-export function PlacesList() {
+export function PlacesList({ hotspots }: { hotspots: Hotspot[] }) {
   const selected = useStore((s) => s.selected)
   const tr = useT()
   return (
@@ -16,7 +17,7 @@ export function PlacesList() {
             {tr(UI.overview)}
           </button>
         </li>
-        {HOTSPOTS.map((h, i) => (
+        {hotspots.map((h, i) => (
           <li key={h.id}>
             <button
               type="button"

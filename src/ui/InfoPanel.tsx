@@ -1,14 +1,15 @@
-import { HOTSPOTS, UI } from '../data/content'
+import type { Hotspot } from '../data/types'
+import { UI } from '../data/ui'
 import { actions, useStore } from '../state/store'
 import { useT } from '../lib/useLang'
 
-export function InfoPanel() {
+export function InfoPanel({ hotspots }: { hotspots: Hotspot[] }) {
   const selected = useStore((s) => s.selected)
   const rtl = useStore((s) => s.lang === 'ar')
   const tr = useT()
-  const hotspot = HOTSPOTS.find((h) => h.id === selected)
+  const hotspot = hotspots.find((h) => h.id === selected)
   if (!hotspot) return null
-  const index = HOTSPOTS.indexOf(hotspot)
+  const index = hotspots.indexOf(hotspot)
 
   return (
     <aside className="info" aria-live="polite" key={hotspot.id}>
@@ -16,7 +17,7 @@ export function InfoPanel() {
         ×
       </button>
       <span className="info__eyebrow" dir="ltr">
-        {index + 1} / {HOTSPOTS.length}
+        {index + 1} / {hotspots.length}
       </span>
       <h2>{tr(hotspot.title)}</h2>
       <p>{tr(hotspot.body)}</p>
@@ -30,7 +31,7 @@ export function InfoPanel() {
           type="button"
           className="btn btn--ghost"
           disabled={index === 0}
-          onClick={() => actions.select(HOTSPOTS[index - 1].id)}
+          onClick={() => actions.select(hotspots[index - 1].id)}
           aria-label={tr(UI.previous)}
         >
           {rtl ? '›' : '‹'}
@@ -38,8 +39,8 @@ export function InfoPanel() {
         <button
           type="button"
           className="btn btn--ghost"
-          disabled={index === HOTSPOTS.length - 1}
-          onClick={() => actions.select(HOTSPOTS[index + 1].id)}
+          disabled={index === hotspots.length - 1}
+          onClick={() => actions.select(hotspots[index + 1].id)}
           aria-label={tr(UI.next)}
         >
           {rtl ? '‹' : '›'}

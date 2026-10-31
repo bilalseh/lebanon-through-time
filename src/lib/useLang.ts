@@ -1,5 +1,5 @@
 import { useStore } from '../state/store'
-import type { Localized } from '../data/content'
+import type { Localized } from '../data/types'
 
 /** Returns a translator bound to the current language. */
 export function useT() {

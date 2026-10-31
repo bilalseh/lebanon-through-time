@@ -1,44 +1,34 @@
 import { useEffect } from 'react'
-import { Scene } from './scene/Scene'
-import { TopBar } from './ui/TopBar'
-import { PlacesList } from './ui/PlacesList'
-import { InfoPanel } from './ui/InfoPanel'
-import { Timeline } from './ui/Timeline'
-import { Intro } from './ui/Intro'
-import { UI } from './data/content'
-import { useStore } from './state/store'
-import { useGuidedTour, useHistoryPlayback } from './lib/usePlayback'
-import { useT } from './lib/useLang'
+import { siteById } from './data/sites'
+import { UI } from './data/ui'
+import { ExperienceView } from './experiences/ExperienceView'
+import { hasExperience } from './experiences/types'
+import { useRouter } from './lib/useRouter'
+import { MapView } from './map/MapView'
+import { SitePage } from './site/SitePage'
+import { actions, useStore } from './state/store'
 
 export default function App() {
+  useRouter()
   const lang = useStore((s) => s.lang)
-  const started = useStore((s) => s.started)
-  const tr = useT()
-  useHistoryPlayback()
-  useGuidedTour()
+  const view = useStore((s) => s.view)
+  const site = view.kind === 'map' ? undefined : siteById(view.id)
+  const unknown = view.kind !== 'map' && !site
 
   useEffect(() => {
     document.documentElement.lang = lang
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
-    document.title = UI.title[lang]
   }, [lang])
 
-  return (
-    <div className="app">
-      <div className="stage">
-        <Scene />
-      </div>
-      {started && (
-        <>
-          <TopBar />
-          <PlacesList />
-          <InfoPanel />
-          <Timeline />
-          <p className="hint">{tr(UI.hint)}</p>
-          <p className="disclaimer">{tr(UI.disclaimer)}</p>
-        </>
-      )}
-      <Intro />
-    </div>
-  )
+  useEffect(() => {
+    document.title = site ? `${site.name[lang]} · ${UI.title[lang]}` : UI.title[lang]
+  }, [site, lang])
+
+  useEffect(() => {
+    if (unknown) actions.navigate({ kind: 'map' })
+  }, [unknown])
+
+  if (view.kind === 'experience' && site && hasExperience(site.id)) return <ExperienceView site={site} />
+  if (view.kind !== 'map' && site) return <SitePage site={site} />
+  return <MapView />
 }

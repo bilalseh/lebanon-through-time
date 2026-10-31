@@ -1,0 +1,50 @@
+import type { Photo } from '../types'
+
+export const PHOTOS: Photo[] = [
+  {
+    src: '/photos/harissa/shrine.jpg',
+    thumb: '/photos/harissa/shrine-sm.jpg',
+    caption: { en: 'The statue on its stone tower, with the basilica behind', ar: 'التمثال فوق برجه الحجري والكاتدرائية خلفه' },
+    author: 'Paul Saad',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Our_Lady_Of_Lebanon_Harissa.jpg',
+  },
+  {
+    src: '/photos/harissa/statue.jpg',
+    thumb: '/photos/harissa/statue-sm.jpg',
+    caption: { en: 'The crowned Virgin with open arms', ar: 'العذراء المتوجة بذراعين مفتوحتين' },
+    author: 'Cedric saliba',
+    license: 'CC BY-SA 3.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Our_lady_of_Lebanon.JPG',
+  },
+  {
+    src: '/photos/harissa/basilica.jpg',
+    thumb: '/photos/harissa/basilica-sm.jpg',
+    caption: { en: 'The Maronite basilica by Pierre El Khoury', ar: 'الكاتدرائية المارونية من تصميم بيار الخوري' },
+    author: 'Choinowski',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Our_Lady_of_Lebanon2019.jpg',
+  },
+  {
+    src: '/photos/harissa/bay.jpg',
+    thumb: '/photos/harissa/bay-sm.jpg',
+    caption: { en: 'Jounieh bay seen from the shrine', ar: 'خليج جونيه من المزار' },
+    author: 'PamelaFr',
+    license: 'CC BY-SA 3.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Jounieh_Bay_View_from_Harissa.jpg',
+  },
+  {
+    src: '/photos/harissa/old-1950.jpg',
+    thumb: '/photos/harissa/old-1950-sm.jpg',
+    caption: { en: 'The statue and its spiral ramp in 1950', ar: 'التمثال ودرجه الحلزوني عام 1950' },
+    author: 'Willem van de Poll',
+    license: 'CC0',
+    licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+    source: 'https://commons.wikimedia.org/wiki/File:Standbeeld_voor_Maria_%27De_heilige_maagd%27_te_Harissa,_Bestanddeelnr_255-6344.jpg',
+    year: 1950,
+  },
+]

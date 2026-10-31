@@ -1,13 +1,16 @@
-import { ERAS, UI, eraAt } from '../data/content'
-import { TIMELINE_MAX } from '../data/templeLayout'
+import { UI } from '../data/ui'
+import { nearestEra } from '../experiences/eras'
+import type { Experience } from '../experiences/types'
 import { actions, useStore } from '../state/store'
 import { useT } from '../lib/useLang'
 
-export function Timeline() {
+/** The 3D experience's timeline: a slider over the eras plus "play history". */
+export function Timeline({ experience }: { experience: Experience }) {
+  const { eras, timelineMax } = experience
   const t = useStore((s) => s.t)
   const playing = useStore((s) => s.playing)
   const tr = useT()
-  const era = eraAt(t)
+  const era = nearestEra(eras, t)
 
   return (
     <section className="timeline" aria-label={tr(UI.timeline)}>
@@ -29,7 +32,7 @@ export function Timeline() {
           <input
             type="range"
             min={0}
-            max={TIMELINE_MAX}
+            max={timelineMax}
             step={0.001}
             value={t}
             onChange={(e) => {
@@ -38,15 +41,15 @@ export function Timeline() {
             }}
             aria-label={tr(UI.timeline)}
             aria-valuetext={tr(era.label)}
-            style={{ '--progress': `${(t / TIMELINE_MAX) * 100}%` } as React.CSSProperties}
+            style={{ '--progress': `${(t / timelineMax) * 100}%` } as React.CSSProperties}
           />
           <div className="timeline__ticks">
-            {ERAS.map((e) => (
+            {eras.map((e) => (
               <button
                 type="button"
                 key={e.t}
                 className={era.t === e.t ? 'is-active' : ''}
-                style={{ insetInlineStart: `${(e.t / TIMELINE_MAX) * 100}%` }}
+                style={{ insetInlineStart: `${(e.t / timelineMax) * 100}%` }}
                 onClick={() => {
                   actions.setPlaying(false)
                   actions.setT(e.t)
