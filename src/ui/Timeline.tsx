@@ -1,7 +1,7 @@
 import { UI } from '../data/ui'
 import { nearestEra } from '../experiences/eras'
 import type { Experience } from '../experiences/types'
-import { cancel, narrationSupported } from '../lib/narration'
+import { cancel } from '../lib/narration'
 import { actions, useStore } from '../state/store'
 import { useT } from '../lib/useLang'
 
@@ -10,7 +10,7 @@ export function Timeline({ experience }: { experience: Experience }) {
   const { eras, timelineMax } = experience
   const t = useStore((s) => s.t)
   const playing = useStore((s) => s.playing)
-  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const narrate = useStore((s) => s.narrate)
   const tr = useT()
   const era = nearestEra(eras, t)
 

@@ -77,6 +77,11 @@ test('arabic layout is right-to-left and remembered', async ({ page }, info) => 
   await expect(page.locator('.brand h1')).toHaveText('لبنان عبر الزمن')
   await page.waitForTimeout(2000)
   await shot(page, 'map-ar', info.project.name)
+  // With narration on and no Arabic voice on this machine, the app explains itself instead of staying silent.
+  await page.getByRole('button', { name: 'سرد صوتي' }).click()
+  await page.waitForTimeout(500)
+  await shot(page, 'map-ar-narration', info.project.name)
+  await page.getByRole('button', { name: 'سرد صوتي' }).click()
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
 })

@@ -233,6 +233,36 @@
   align-items: center;
   gap: 0.4rem;
 }
+.narration-hint {
+  position: absolute;
+  bottom: 9.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 2.5rem));
+  z-index: 31;
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(150, 58, 48, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--ink);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: center;
+}
+.stl .narration-hint {
+  position: static;
+  transform: none;
+  width: auto;
+  margin-top: 0.8rem;
+  text-align: start;
+}
+@media (max-width: 820px) {
+  .narration-hint {
+    bottom: 10.2rem;
+    width: calc(100% - 2rem);
+  }
+}
 .pin--labelled .pin__label {
   opacity: 1;
 }

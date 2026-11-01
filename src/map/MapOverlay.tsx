@@ -7,7 +7,7 @@ import { hasExperience } from '../experiences/types'
 import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { LangToggle } from '../ui/LangToggle'
-import { NarrationToggle } from '../ui/NarrationToggle'
+import { NarrationHint, NarrationToggle } from '../ui/NarrationToggle'
 import { TopBar } from '../ui/TopBar'
 import { TimeScrubber } from './TimeScrubber'
 import { filterSites } from './filter'
@@ -137,6 +137,7 @@ export function MapOverlay() {
         <NarrationToggle compact />
         <LangToggle />
       </TopBar>
+      <NarrationHint />
       <div className={`sidebar-wrap${drawer ? ' is-open' : ''}`}>
         <SiteList onPick={() => setDrawer(false)} />
       </div>

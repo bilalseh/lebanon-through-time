@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { SITES, firstYear } from '../data/sites'
 import { UI } from '../data/ui'
 import { MAP_YEAR_MAX, MAP_YEAR_MIN, PERIODS, formatYear, periodAt, progressFromYear, yearFromProgress } from '../data/years'
-import { cancel, narrationSupported, speak } from '../lib/narration'
+import { cancel, narrate as readAloud } from '../lib/narration'
+import { tourKey, tourText } from '../lib/narrationTexts'
 import { useT } from '../lib/useLang'
 import { actions, store, useStore } from '../state/store'
 
@@ -16,7 +17,7 @@ const PLAY_SECONDS = 24
  */
 function useYearPlayback() {
   const playing = useStore((s) => s.yearPlaying)
-  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const narrate = useStore((s) => s.narrate)
   const lang = useStore((s) => s.lang)
   useEffect(() => {
     if (!playing) return
@@ -40,8 +41,7 @@ function useYearPlayback() {
           actions.setYear(first.year)
           actions.focus(newcomer.id)
           speaking = true
-          const text = `${newcomer.name[lang]}. ${formatYear(first.year, lang, first.approx)}. ${first.title[lang]}. ${first.text[lang]}`
-          speak(text, lang).then(() => {
+          readAloud(tourKey(newcomer.id), tourText(newcomer, lang), lang).then(() => {
             speaking = false
             last = performance.now()
           })
@@ -72,7 +72,7 @@ function useYearPlayback() {
 export function TimeScrubber() {
   const year = useStore((s) => s.year)
   const playing = useStore((s) => s.yearPlaying)
-  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const narrate = useStore((s) => s.narrate)
   const lang = useStore((s) => s.lang)
   const tr = useT()
   useYearPlayback()

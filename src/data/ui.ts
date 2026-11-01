@@ -45,6 +45,10 @@ export const UI = {
   play: { en: 'Play history', ar: 'تشغيل التاريخ' },
   narration: { en: 'Narration', ar: 'سرد صوتي' },
   skip: { en: 'Skip', ar: 'تخطّي' },
+  noVoice: {
+    en: 'No voice for this language is installed on this device, so narration pauses silently. On Windows, add one under Settings > Time & language > Speech.',
+    ar: 'لا يوجد صوت عربي مثبّت على هذا الجهاز، لذا يتوقف السرد بصمت. على ويندوز، أضِف صوتاً عربياً من الإعدادات > الوقت واللغة > الكلام.',
+  },
   pause: { en: 'Pause', ar: 'إيقاف مؤقت' },
   close: { en: 'Close', ar: 'إغلاق' },
   previous: { en: 'Previous', ar: 'السابق' },

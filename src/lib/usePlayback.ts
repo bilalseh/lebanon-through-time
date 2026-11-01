@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import type { Experience } from '../experiences/types'
 import { actions, store, useStore } from '../state/store'
-import { cancel, narrationSupported, speak } from './narration'
+import { cancel, narrate as readAloud } from './narration'
+import { eraKey, eraText } from './narrationTexts'
 
 const TOUR_STEP_MS = 8000
 
@@ -12,7 +13,7 @@ const TOUR_STEP_MS = 8000
  */
 export function useHistoryPlayback(experience: Experience | null) {
   const playing = useStore((s) => s.playing)
-  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const narrate = useStore((s) => s.narrate)
   const lang = useStore((s) => s.lang)
   useEffect(() => {
     if (!playing || !experience) return
@@ -36,7 +37,7 @@ export function useHistoryPlayback(experience: Experience | null) {
           spoken.add(due.t)
           actions.setT(due.t)
           speaking = true
-          speak(`${due.title[lang]}. ${due.text[lang]}`, lang).then(() => {
+          readAloud(eraKey(experience.id, eras.indexOf(due)), eraText(due, lang), lang).then(() => {
             speaking = false
             last = performance.now()
           })

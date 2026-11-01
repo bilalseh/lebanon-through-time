@@ -1,13 +1,19 @@
+import { useSyncExternalStore } from 'react'
 import { UI } from '../data/ui'
-import { cancel, narrationSupported } from '../lib/narration'
+import { cancel, narrationStatus, subscribeStatus, type NarrationStatus } from '../lib/narration'
 import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 
-/** Turns spoken narration on or off; hidden where the browser cannot speak. */
+/** Whether the current language will be read from recordings, a browser voice, or not at all. */
+export function useNarrationStatus(): NarrationStatus {
+  const lang = useStore((s) => s.lang)
+  return useSyncExternalStore(subscribeStatus, () => narrationStatus(lang))
+}
+
+/** Turns spoken narration on or off. */
 export function NarrationToggle({ compact = false }: { compact?: boolean }) {
   const narrate = useStore((s) => s.narrate)
   const tr = useT()
-  if (!narrationSupported) return null
   return (
     <button
       type="button"
@@ -30,5 +36,18 @@ export function NarrationToggle({ compact = false }: { compact?: boolean }) {
       </svg>
       {!compact && <span>{tr(UI.narration)}</span>}
     </button>
+  )
+}
+
+/** Explains why narration is silent: no recording and no voice for this language on this device. */
+export function NarrationHint() {
+  const narrate = useStore((s) => s.narrate)
+  const status = useNarrationStatus()
+  const tr = useT()
+  if (!narrate || status !== 'none') return null
+  return (
+    <p className="narration-hint" role="status">
+      {tr(UI.noVoice)}
+    </p>
   )
 }

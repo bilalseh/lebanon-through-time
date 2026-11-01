@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import type { Site } from '../data/types'
 import { UI } from '../data/ui'
 import { formatYear, periodAt } from '../data/years'
-import { cancel, narrationSupported, speak } from '../lib/narration'
+import { cancel, narrate as readAloud } from '../lib/narration'
+import { eventKey, eventText } from '../lib/narrationTexts'
 import { useT } from '../lib/useLang'
 import { useStore } from '../state/store'
-import { NarrationToggle } from '../ui/NarrationToggle'
+import { NarrationHint, NarrationToggle } from '../ui/NarrationToggle'
 
 const STEP_MS = 4500
 const AFTER_SPEECH_MS = 700
@@ -16,7 +17,7 @@ export function SiteTimeline({ site }: { site: Site }) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const lang = useStore((s) => s.lang)
-  const narrate = useStore((s) => s.narrate) && narrationSupported
+  const narrate = useStore((s) => s.narrate)
   const rtl = lang === 'ar'
   const tr = useT()
   const event = events[index]
@@ -48,8 +49,7 @@ export function SiteTimeline({ site }: { site: Site }) {
       else setIndex(index + 1)
     }
     if (narrate) {
-      const current = events[index]
-      speak(`${formatYear(current.year, lang, current.approx)}. ${current.title[lang]}. ${current.text[lang]}`, lang).then(() => {
+      readAloud(eventKey(site.id, index), eventText(events[index], lang), lang).then(() => {
         if (alive) timer = window.setTimeout(advance, AFTER_SPEECH_MS)
       })
     } else {
@@ -127,6 +127,7 @@ export function SiteTimeline({ site }: { site: Site }) {
             {rtl ? '‹' : '›'}
           </button>
         </div>
+        <NarrationHint />
       </article>
     </div>
   )

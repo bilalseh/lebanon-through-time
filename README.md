@@ -69,6 +69,20 @@ npm run test:e2e   # end-to-end tests (uses the installed Chrome)
 npm run build      # production build in dist/
 ```
 
+## Narration
+
+The speaker button reads timelines aloud and turns the map's "play" into a guided tour. By default it uses the browser's own voices, which is free and offline but depends on the device: Windows and most phones ship English voices, while Arabic needs a language pack (Windows: Settings > Time & language > Speech). When no voice exists, the app says so and keeps the timing silently.
+
+For consistent, high-quality narration in both languages, record the clips once with Azure Speech (it has Lebanese Arabic neural voices; the free tier covers the whole set):
+
+```bash
+npm install
+AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=westeurope npm run narration
+npm run narration -- --dry      # just count the clips and characters
+```
+
+This writes `public/audio/<lang>/<key>.mp3` and a manifest; the app plays a clip whenever one exists and only falls back to the browser voice otherwise. Re-run it after editing texts (only missing clips are recorded; add `--force` to redo all).
+
 ## Adding a place
 
 1. Create `src/data/sites/<id>.ts` exporting a `Site` (see `baalbek.ts`) and `src/data/sites/<id>.photos.ts`.

@@ -8,7 +8,7 @@ import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { InfoPanel } from '../ui/InfoPanel'
 import { LangToggle } from '../ui/LangToggle'
-import { NarrationToggle } from '../ui/NarrationToggle'
+import { NarrationHint, NarrationToggle } from '../ui/NarrationToggle'
 import { PlacesList } from '../ui/PlacesList'
 import { Timeline } from '../ui/Timeline'
 import { TopBar } from '../ui/TopBar'
@@ -70,6 +70,7 @@ export function ExperienceView({ site }: { site: Site }) {
         <NarrationToggle compact />
         <LangToggle />
       </TopBar>
+      <NarrationHint />
       <PlacesList hotspots={experience.hotspots} />
       <InfoPanel hotspots={experience.hotspots} />
       <Timeline experience={experience} />
