@@ -73,15 +73,15 @@ npm run build      # production build in dist/
 
 The speaker button reads timelines aloud and turns the map's "play" into a guided tour. By default it uses the browser's own voices, which is free and offline but depends on the device: Windows and most phones ship English voices, while Arabic needs a language pack (Windows: Settings > Time & language > Speech). When no voice exists, the app says so and keeps the timing silently.
 
-For consistent, high-quality narration in both languages, record the clips once with Azure Speech (it has Lebanese Arabic neural voices; the free tier covers the whole set):
+For consistent, high-quality narration in both languages, the clips are recorded once with Microsoft's neural voices (British English, and Lebanese Arabic):
 
 ```bash
-npm install
-AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=westeurope npm run narration
-npm run narration -- --dry      # just count the clips and characters
+npm run narration                       # free, no account: Edge's read-aloud service
+npm run narration -- --provider azure   # same voices via Azure Speech (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION)
+npm run narration -- --dry              # just count the clips and characters
 ```
 
-This writes `public/audio/<lang>/<key>.mp3` and a manifest; the app plays a clip whenever one exists and only falls back to the browser voice otherwise. Re-run it after editing texts (only missing clips are recorded; add `--force` to redo all).
+This writes `public/audio/<lang>/<key>.mp3` (about 320 clips, 15 MB) and a manifest. The app downloads only the manifest at start and each clip at the moment it plays, so visitors who never turn narration on download nothing. Re-run after editing texts: only missing clips are recorded (`--force` redoes all). The Edge provider is an unofficial use of the browser's read-aloud service, fine for a one-off recording; Azure is the official equivalent.
 
 ## Adding a place
 
