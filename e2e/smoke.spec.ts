@@ -102,6 +102,62 @@ test('narrated map tour flies to each place as its story begins', async ({ page 
   await expect(page.getByRole('button', { name: 'Narration' })).toHaveAttribute('aria-pressed', 'true')
 })
 
+for (const lang of ['en', 'ar']) {
+  test(`map pins sit exactly on their places (${lang})`, async ({ page }) => {
+    await page.addInitScript((l) => localStorage.setItem('ltt-lang', l), lang)
+    await page.goto('/')
+    await expect(page.locator('.pin').first()).toBeVisible({ timeout: 20_000 })
+    await page.waitForTimeout(1500)
+    // drei moves each wrapper to the projected point; the dot's centre must be exactly there.
+    const offsets = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('.overlay > div')]
+        .filter((el) => el.querySelector('.pin__dot, .cluster__button'))
+        .map((el) => {
+          const [x, y] = el.style.transform.match(/-?[\d.]+/g)!.slice(1, 3).map(Number)
+          const dot = el.querySelector('.pin__dot, .cluster__button')!.getBoundingClientRect()
+          return Math.hypot(dot.x + dot.width / 2 - x, dot.y + dot.height / 2 - y)
+        }),
+    )
+    expect(offsets.length).toBeGreaterThan(5)
+    for (const d of offsets) expect(d).toBeLessThan(2)
+  })
+}
+
+test('3D markers never show through the panels while the scene turns', async ({ page }, info) => {
+  test.skip(info.project.name === 'mobile', 'desktop only')
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('/sites/baalbek/3d')
+  await expect(page.locator('.marker').first()).toBeVisible({ timeout: 20_000 })
+  let sawHidden = false
+  for (let step = 0; step < 14; step++) {
+    // Drag to orbit, so markers sweep across the left-hand panel.
+    await page.mouse.move(700, 450)
+    await page.mouse.down()
+    await page.mouse.move(760, 450, { steps: 6 })
+    await page.mouse.up()
+    await page.waitForTimeout(700)
+    const { shownUnder, hidden } = await page.evaluate(() => {
+      const panels = [...document.querySelectorAll('.places, .info, .timeline')].map((p) => p.getBoundingClientRect())
+      let shownUnder = 0
+      let hidden = 0
+      for (const el of document.querySelectorAll('.overlay > div')) {
+        if (el.classList.contains('is-under-panel')) {
+          hidden += 1
+          continue
+        }
+        const r = el.querySelector('.marker')!.getBoundingClientRect()
+        const cx = r.x + r.width / 2
+        const cy = r.y + r.height / 2
+        if (panels.some((p) => cx > p.left && cx < p.right && cy > p.top && cy < p.bottom)) shownUnder += 1
+      }
+      return { shownUnder, hidden }
+    })
+    expect(shownUnder).toBe(0)
+    if (hidden > 0) sawHidden = true
+  }
+  expect(sawHidden).toBe(true)
+})
+
 for (const id of ['baalbek', 'anjar', 'tyre', 'cedars-of-god']) {
   test(`3D experience: ${id} renders at its first and last era`, async ({ page }, info) => {
     test.skip(info.project.name === 'mobile', 'desktop only')

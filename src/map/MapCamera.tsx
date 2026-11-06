@@ -2,10 +2,14 @@ import { useEffect, useRef, type ComponentRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { MAP_BOUNDS } from '../data/lebanon/terrain'
 import { siteById } from '../data/sites'
+import { usePanelViewOffset } from '../experiences/shared/usePanelViewOffset'
 import { store, useStore } from '../state/store'
 import { sitePosition } from './positions'
+import { VIGNETTE } from './terrainMesh'
+
+/** How far from the map's centre the view can be panned, staying inside the visible circle. */
+const PAN_RADIUS = VIGNETTE.inner - 15
 
 export const MAP_OVERVIEW = {
   position: [-70, 175, 235] as [number, number, number],
@@ -21,6 +25,7 @@ export function MapCamera() {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const camera = useThree((s) => s.camera)
   const flight = useStore((s) => s.mapFlight)
+  usePanelViewOffset('.sidebar, .focus-card', '.scrubber, .topbar .brand, .narration-hint')
   const anim = useRef<{
     progress: number
     fromPos: THREE.Vector3
@@ -64,14 +69,18 @@ export function MapCamera() {
       c.target.lerpVectors(a.fromTarget, a.toTarget, k)
       if (a.progress >= 1) anim.current = null
     } else {
-      // Keep the view over the map area when panning.
+      // Keep the view over the visible part of the map when panning.
       const t = c.target
-      const clampedX = Math.min(MAP_BOUNDS.maxX - 20, Math.max(MAP_BOUNDS.minX + 20, t.x))
-      const clampedZ = Math.min(MAP_BOUNDS.maxZ - 20, Math.max(MAP_BOUNDS.minZ + 20, t.z))
-      if (clampedX !== t.x || clampedZ !== t.z) {
-        camera.position.x += clampedX - t.x
-        camera.position.z += clampedZ - t.z
-        t.set(clampedX, 0, clampedZ)
+      const dx = t.x - VIGNETTE.x
+      const dz = t.z - VIGNETTE.z
+      const d = Math.hypot(dx, dz)
+      if (d > PAN_RADIUS) {
+        const k = PAN_RADIUS / d
+        const nx = VIGNETTE.x + dx * k
+        const nz = VIGNETTE.z + dz * k
+        camera.position.x += nx - t.x
+        camera.position.z += nz - t.z
+        t.set(nx, 0, nz)
       }
     }
     c.update()

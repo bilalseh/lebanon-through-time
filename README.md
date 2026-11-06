@@ -26,7 +26,8 @@
 ## Technical highlights
 
 - **React Three Fiber + drei** on top of Three.js, strict **TypeScript**, built with **Vite**.
-- **Procedural relief map.** The land mask comes from a simplified Natural Earth polygon (187 points for Lebanon); the elevation is a hand-shaped model of the two mountain ranges and the valley between them, so the whole map is a few kilobytes of code rather than a tile service or a height-map download.
+- **Procedural relief map.** The land mask comes from a simplified Natural Earth polygon (187 points for Lebanon); the elevation is a hand-shaped model of the two mountain ranges and the valley between them, so the whole map is a few kilobytes of code rather than a tile service or a height-map download. Land and sea are one smooth-shaded mesh: the mask is rasterised, closed and blurred for a clean coastline, and vertex alpha fades the map into the background so it has no edge (`src/map/terrainMesh.ts`, built once in about 170 ms).
+- **Readable pins.** Pins that would overlap on screen merge into a numbered cluster with a list, names are shown only where they fit, and the camera's projection is offset so the country sits in the middle of whatever the panels leave free (left or right sidebar, card, timeline, phone layouts).
 - **Pure, tested timeline logic.** Every 3D scene has a framework-free layout module (what is built, falling or re-erected at time *t*) with its own unit tests, and the scenes only render that state. The map's non-linear time scale, the year formatting and the site data are unit tested too (109 tests with Vitest).
 - **Instanced rendering.** Colonnades and forests are drawn with a handful of `InstancedMesh`es: Anjar's 350 columns, or the Cedars' 3,200 trees, cost four draw calls each. Instance matrices are recomputed only when the timeline moves.
 - **Code splitting.** Each 3D experience is a lazily loaded chunk of about 5 KB gzipped; the map and site pages never pay for scenes you do not open.

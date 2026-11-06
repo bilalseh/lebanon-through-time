@@ -105,6 +105,28 @@ const smoothstep = (edge0: number, edge1: number, v: number) => {
   return t * t * (3 - 2 * t)
 }
 
+/** Deterministic hash of a grid corner to [0, 1). */
+function hash2(ix: number, iz: number): number {
+  let h = Math.imul(ix, 374761393) + Math.imul(iz, 668265263)
+  h = Math.imul(h ^ (h >>> 13), 1274126177)
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296
+}
+
+/** Smooth value noise in [0, 1): random values at grid corners, eased in between. */
+function valueNoise(x: number, z: number): number {
+  const ix = Math.floor(x)
+  const iz = Math.floor(z)
+  const fx = x - ix
+  const fz = z - iz
+  const u = fx * fx * (3 - 2 * fx)
+  const w = fz * fz * (3 - 2 * fz)
+  const a = hash2(ix, iz)
+  const b = hash2(ix + 1, iz)
+  const c = hash2(ix, iz + 1)
+  const d = hash2(ix + 1, iz + 1)
+  return a + (b - a) * u + (c - a) * w + (a - b - c + d) * u * w
+}
+
 export interface Relief {
   /** Elevation in km (before exaggeration). */
   elevation: number
@@ -123,8 +145,8 @@ export function relief(lon: number, lat: number): Relief {
   // The high inland plateau: the Bekaa floor and the land beyond the eastern range.
   const plateau = 0.9 * smoothstep(4, 16, ml.distance)
   const valley = smoothstep(6, 14, ml.distance) * (1 - smoothstep(-14, -6, al.distance))
-  // Gentle texture so slopes are not perfectly smooth.
-  const texture = 0.06 * (Math.sin(x * 0.9 + z * 0.4) + Math.cos(z * 1.1 - x * 0.3))
+  // Gentle, irregular texture so slopes are not perfectly smooth (a regular wave would show as a grid).
+  const texture = 0.1 * (valueNoise(x / 7, z / 7) - 0.5) + 0.05 * (valueNoise(x / 2.6 + 17, z / 2.6 + 31) - 0.5)
 
   const elevation = Math.max(0.02, plateau + Math.max(ridgeA, ridgeB) + texture)
   return { elevation, valley }
@@ -149,26 +171,6 @@ export function heightAt(lat: number, lon: number): number {
   const land = landAt(lon, lat)
   if (land === 'sea') return SEA_FLOOR * VERTICAL_EXAGGERATION
   return relief(lon, lat).elevation * VERTICAL_EXAGGERATION
-}
-
-const LEBANON_XZ: Array<Array<[number, number]>> = LEBANON.map((ring) => ring.map(([lon, lat]) => project(lat, lon)))
-
-/** Distance in km from a scene point to the nearest point of Lebanon's border. */
-export function distanceToLebanonKm(x: number, z: number): number {
-  let best = Infinity
-  for (const ring of LEBANON_XZ) {
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [ax, az] = ring[j]
-      const [bx, bz] = ring[i]
-      const dx = bx - ax
-      const dz = bz - az
-      const len2 = dx * dx + dz * dz
-      const k = len2 === 0 ? 0 : Math.min(1, Math.max(0, ((x - ax) * dx + (z - az) * dz) / len2))
-      const d = Math.hypot(x - (ax + k * dx), z - (az + k * dz))
-      if (d < best) best = d
-    }
-  }
-  return best
 }
 
 /** Scene bounds of the map area. */

@@ -4,6 +4,7 @@ import { AdaptiveDpr } from '@react-three/drei'
 import type { Site } from '../data/types'
 import { UI } from '../data/ui'
 import { useGuidedTour, useHistoryPlayback } from '../lib/usePlayback'
+import { useHideUnderPanels } from '../lib/useHideUnderPanels'
 import { useT } from '../lib/useLang'
 import { actions, useStore } from '../state/store'
 import { InfoPanel } from '../ui/InfoPanel'
@@ -16,6 +17,9 @@ import { CameraRig } from './shared/CameraRig'
 import { Hotspots } from './shared/Hotspots'
 import { EXPERIENCES, type Experience } from './types'
 
+/** HTML panels over the canvas; markers passing under them are hidden. */
+const PANELS = '.places, .info, .timeline, .topbar .brand, .topbar__actions, .narration-hint'
+
 /** Loads a site's 3D experience on demand and renders it with the shared controls. */
 export function ExperienceView({ site }: { site: Site }) {
   const [experience, setExperience] = useState<Experience | null>(null)
@@ -24,6 +28,7 @@ export function ExperienceView({ site }: { site: Site }) {
   const tr = useT()
   useHistoryPlayback(experience)
   useGuidedTour(experience)
+  useHideUnderPanels(overlay, PANELS)
 
   useEffect(() => {
     let alive = true

@@ -4,10 +4,10 @@ import { PHOTOS } from './baalbek.photos'
 export const BAALBEK: Site = {
   id: 'baalbek',
   name: { en: 'Baalbek', ar: 'بعلبك' },
-  tagline: { en: 'The largest temples Rome ever built', ar: 'أكبر المعابد التي شيّدتها روما' },
+  tagline: { en: 'Among the largest temples Rome ever built', ar: 'من أكبر المعابد التي شيّدتها روما' },
   summary: {
-    en: 'In the northern Bekaa valley, the Romans raised a sanctuary to Jupiter, Venus and Bacchus on a scale unmatched anywhere in their empire. Earthquakes, sieges and centuries of reuse have left six giant columns of Jupiter standing, the almost intact Temple of Bacchus and podium blocks weighing hundreds of tonnes.',
-    ar: 'في شمال سهل البقاع، شيّد الرومان مجمّعاً دينياً لجوبيتر وفينوس وباخوس بحجم لم يُضاهَ في أي مكان من إمبراطوريتهم. وقد أبقت الزلازل والحصارات وقرون من إعادة الاستخدام ستة أعمدة عملاقة من معبد جوبيتر قائمة، ومعبد باخوس شبه الكامل، وكتل منصة تزن مئات الأطنان.',
+    en: 'In the northern Bekaa valley, the Romans raised a sanctuary to Jupiter, Venus and Bacchus on a scale rarely matched anywhere in their empire. Earthquakes, sieges and centuries of reuse have left six giant columns of Jupiter standing, the almost intact Temple of Bacchus and podium blocks weighing hundreds of tonnes.',
+    ar: 'في شمال سهل البقاع، شيّد الرومان مجمّعاً دينياً لجوبيتر وفينوس وباخوس بحجم قلّما ضاهاه مكان آخر في إمبراطوريتهم. وقد أبقت الزلازل والحصارات وقرون من إعادة الاستخدام ستة أعمدة عملاقة من معبد جوبيتر قائمة، ومعبد باخوس شبه الكامل، وكتل منصة تزن مئات الأطنان.',
   },
   category: 'ancient',
   region: 'baalbek-hermel',

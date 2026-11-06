@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { AdaptiveDpr } from '@react-three/drei'
+import { useHideUnderPanels } from '../lib/useHideUnderPanels'
 import { MAP_OVERVIEW, MapCamera } from './MapCamera'
 import { MapMarkers } from './MapMarkers'
 import { MapOverlay } from './MapOverlay'
@@ -8,10 +9,13 @@ import { SiteGlyphs } from './SiteGlyphs'
 import { Terrain } from './Terrain'
 
 const SUN: [number, number, number] = [-220, 260, 140]
+/** HTML panels over the canvas; pins passing under them are hidden. */
+const PANELS = '.sidebar, .focus-card, .scrubber, .topbar .brand, .topbar__actions, .narration-hint'
 
 /** The landing view: a relief map of Lebanon with a marker per site. */
 export function MapView() {
   const overlay = useRef<HTMLDivElement>(null)
+  useHideUnderPanels(overlay, PANELS)
   return (
     <div className="app map-view">
       <div className="stage">

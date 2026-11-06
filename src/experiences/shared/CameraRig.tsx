@@ -4,6 +4,7 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { store, useStore } from '../../state/store'
 import type { Experience } from '../types'
+import { usePanelViewOffset } from './usePanelViewOffset'
 
 const FLIGHT_SECONDS = 1.6
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2)
@@ -21,6 +22,7 @@ export function CameraRig({ experience }: { experience: Experience }) {
   const flight = useStore((s) => s.flight)
   const selected = useStore((s) => s.selected)
   const interacted = useRef(false)
+  usePanelViewOffset('.places, .info', '.timeline, .topbar .brand')
 
   // A phone in portrait sees a narrower slice of the scene, so its overview starts further back.
   const portrait = size.width < size.height
